@@ -17,6 +17,9 @@
                 @Html.DisplayNameFor(model => model.CarType)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.Booked)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.NumberOfDrivenKm)
             </th>
             <th></th>
@@ -32,11 +35,14 @@
                 @Html.DisplayFor(modelItem => item.CarType)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.Booked)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.NumberOfDrivenKm)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.CarId" class="btn btn-outline-info">Ändra</a> 
-                <a asp-action="Details" asp-route-id="@item.CarId" class="btn btn-outline-info">Detaljer</a> 
+                <a asp-action="Edit" asp-route-id="@item.CarId" class="btn btn-outline-info">Ändra</a>
+                <a asp-action="Details" asp-route-id="@item.CarId" class="btn btn-outline-info">Detaljer</a>
                 <a asp-action="Delete" asp-route-id="@item.CarId" class="btn btn-outline-info">Ta bort</a>
             </td>
         </tr>

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BiluthyrningAB.Controllers;
+using BiluthyrningAB.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -20,6 +22,9 @@ namespace BiluthyrningAB.Models
             get
             {
                 string[] carTypes = Enum.GetNames(typeof(CarType));
+
+                if (Car?.CarType.ToString() == null)    //nån slags indikation på att priset blir fel
+                    return 1;                           
 
                 if (carTypes.Single(x => x == "Small") == Car.CarType.ToString())
                 {
@@ -74,27 +79,5 @@ namespace BiluthyrningAB.Models
 
         public Customer Customer { get; set; }      //En bokning innehåller en kund (SO FAR)
         public Guid CustomerId { get; set; }
-
-        //Om man vill sålla ut på tidpunkt!
-
-        //private bool onGoing = false;
-
-        //[Display (Name = "Pågående")]
-        //public bool OnGoing
-        //{
-        //    get
-        //    {
-        //        if ((StartDate < DateTime.Now) && (ReturnDate > DateTime.Now))
-        //        {
-        //            onGoing = true;
-        //        }
-        //        else
-        //        {
-        //            onGoing = false;
-        //        }
-        //        return onGoing;
-        //    }
-        //}
-
     }
 }

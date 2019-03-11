@@ -10,7 +10,7 @@ namespace BiluthyrningAB.ViewModels
     public class BookingVm
     {
         public Booking Booking { get; set; }
-        public List<SelectListItem> CarTypes { get; set; }
+        public List<SelectListItem> Cars { get; set; }
         public List<SelectListItem> Customers { get; set; }
     }
 }

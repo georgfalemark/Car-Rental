@@ -22,6 +22,9 @@ namespace BiluthyrningAB.Models
         [Display(Name = "Antal körda mil")]
         public int NumberOfDrivenKm { get; set; }
 
+        [Display(Name = "Bokad")]
+        public bool Booked { get; set; }
+
         public List<Booking> Bookings { get; set; }   //En till mångarelation gentemot bokningar, "1 bil kan finnas i flera bokningar"
     }
 

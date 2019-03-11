@@ -11,6 +11,11 @@
         <form asp-action="Create" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+            @if (ViewBag.Message != null)
+            {
+                <span class="text-danger">@ViewBag.Message</span>
+            }
+
             <div class="form-group">
                 <label class="control-label">Kund</label>
                 <select asp-for="Booking.CustomerId" asp-items="Model.Customers" class="form-control">
@@ -19,16 +24,10 @@
             </div>
 
             <div class="form-group">
-                <label class="control-label">Biltyp</label>
-                <select asp-for="Booking.Car.CarType" asp-items="Model.CarTypes" class="form-control">
-                    <option disabled selected>--- VÄLJ BILTYP ---</option>
+                <label class="control-label">Bil</label>
+                <select asp-for="Booking.CarId" asp-items="Model.Cars" class="form-control">
+                    <option disabled selected>--- VÄLJ BIL ---</option>
                 </select>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Booking.Car.LicenseNumber" class="control-label"></label>
-                <input asp-for="Booking.Car.LicenseNumber" class="form-control" />
-                <span asp-validation-for="Booking.Car.LicenseNumber" class="text-danger"></span>
             </div>
 
             <div class="form-group">

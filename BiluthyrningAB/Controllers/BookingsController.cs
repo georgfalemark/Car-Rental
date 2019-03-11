@@ -67,20 +67,17 @@ namespace BiluthyrningAB.Controllers
         {
             BookingVm bookingVm = new BookingVm();
 
+            //Fyller listan med bilarna som finns genom metod
+            bookingVm.Cars = FillCarListOfSelectListItems();
 
-            //Fyller listan med biltyper!
-            string[] arr = Enum.GetNames(typeof(CarType));
-            List<SelectListItem> list = new List<SelectListItem>();
+            //Fyller listan med kunder som finns genom metod
+            bookingVm.Customers = FillCustomerListOfSelectListItems();
 
-            foreach (var item in arr)
-            {
-                var y = new SelectListItem() { Text = item, Value = item };
-                list.Add(y);
-            }
+            return View(bookingVm);
+        }
 
-            bookingVm.CarTypes = list;
-
-            //Fyller listan med kunder
+        private List<SelectListItem> FillCustomerListOfSelectListItems()
+        {
             var customers = _context.Customers.ToList();
             List<SelectListItem> listOfCustomers = new List<SelectListItem>();
 
@@ -90,21 +87,46 @@ namespace BiluthyrningAB.Controllers
                 var x = new SelectListItem() { Text = wholeName, Value = customer.CustomerId.ToString() };
                 listOfCustomers.Add(x);
             }
+            return listOfCustomers;
+        }
 
-            bookingVm.Customers = listOfCustomers;
+        private List<SelectListItem> FillCarListOfSelectListItems()
+        {
+            var cars = _context.Cars.ToList();
+            List<SelectListItem> listOfCars = new List<SelectListItem>();
 
+            foreach (var car in cars)
+            {
+                var y = new SelectListItem() { Text = car.LicenseNumber, Value = car.CarId.ToString(), Group = new SelectListGroup { Name = car.CarType.ToString() } };
+                listOfCars.Add(y);
+            }
 
-            return View(bookingVm);
+            return listOfCars;
         }
 
         // POST: 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BookingId,CustomerId,Car,StartDate")] Booking booking)
+        public async Task<IActionResult> Create([Bind("BookingId,CustomerId,CarId,StartDate")] Booking booking)
         {
-
             booking.ReturnDate = booking.StartDate.AddDays(1);
             booking.OnGoing = true;
+
+            //Hämtar bilen vi har att göra med och sätter den till bokad. Om den redan är bokad så berättar vi det 
+            booking.Car = _context.Cars.Single(x => x.CarId == booking.CarId);
+
+            if (booking.Car.Booked == false)
+            {
+                booking.Car.Booked = true;
+            }
+            else
+            {
+                ViewBag.Message = "Bilen är redan bokad, vänligen välj en annan";
+                BookingVm error_bookingVm = new BookingVm();
+                error_bookingVm.Cars = FillCarListOfSelectListItems();
+                error_bookingVm.Customers = FillCustomerListOfSelectListItems();
+                return View(error_bookingVm);
+            }
 
             if (ModelState.IsValid)
             {
@@ -112,41 +134,20 @@ namespace BiluthyrningAB.Controllers
                 booking.BookingId = Guid.NewGuid();
                 _context.Add(booking);
 
-
-                //Lägger till bilen i systemet
-                booking.Car.CarId = Guid.NewGuid();
-                _context.Add(booking.Car);
-
+                //Uppdaterar bilen till bokad
+                _context.Update(booking.Car);
 
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
-
-            //Om det misslyckas så hämtar vi biltyperna på nytt
             BookingVm bookingVm = new BookingVm();
-            string[] arr = Enum.GetNames(typeof(CarType));
-            List<SelectListItem> list = new List<SelectListItem>();
 
-            foreach (var item in arr)
-            {
-                var y = new SelectListItem() { Text = item, Value = item };
-                list.Add(y);
-            }
-            bookingVm.CarTypes = list;
+            //Om det misslyckas så hämtar vi bilarna på nytt
+            bookingVm.Cars = FillCarListOfSelectListItems();
 
-            //Om det misslyckas så hämtar vi kunderna på nytt
-            var customers = _context.Customers.ToList();
-            List<SelectListItem> listOfCustomers = new List<SelectListItem>();
-
-            foreach (var customer in customers)
-            {
-                string wholeName = $"{customer.FirstName} {customer.LastName}";
-                var x = new SelectListItem() { Text = wholeName, Value = customer.CustomerId.ToString() };
-                listOfCustomers.Add(x);
-            }
-
-            bookingVm.Customers = listOfCustomers;
+            ////Om det misslyckas så hämtar vi kunderna på nytt
+            bookingVm.Customers = FillCustomerListOfSelectListItems();
 
             return View(bookingVm);
         }
@@ -185,6 +186,9 @@ namespace BiluthyrningAB.Controllers
                 {
                     //Sätter ordern till slutförd
                     booking.OnGoing = false;
+
+                    //Gör bilen obokad igen
+                    booking.Car.Booked = false;
 
                     //uppdaterar bilens antal körda kilometer
                     booking.Car.NumberOfDrivenKm = booking.Car.NumberOfDrivenKm + Convert.ToInt32(booking.NumberOfKm);
