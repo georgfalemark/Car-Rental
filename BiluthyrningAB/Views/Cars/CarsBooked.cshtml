@@ -16,8 +16,8 @@
         <div class="col col-3"></div>
         <div class="col col-5 text-center" style="border: 1px solid black">
             <br />
-            <a class="btn btn-primary" asp-action="Index">Alla Bilar</a>
-            <a class="btn btn-outline-info" asp-action="CarsBooked">Bokade Bilar</a>
+            <a class="btn btn-outline-info" asp-action="Index">Alla Bilar</a>
+            <a class="btn btn-primary" asp-action="CarsBooked">Bokade Bilar</a>
             <a class="btn btn-outline-info" asp-action="CarsNotBooked">Tillgängliga Bilar</a>
             <br />
         </div>
@@ -43,26 +43,27 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.LicenseNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CarType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Booked)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumberOfDrivenKm)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.CarId" class="btn btn-outline-info">Ändra</a>
-                <a asp-action="Details" asp-route-id="@item.CarId" class="btn btn-outline-info">Detaljer</a>
-                <a asp-action="Delete" asp-route-id="@item.CarId" class="btn btn-outline-info">Ta bort</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LicenseNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CarType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Booked)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumberOfDrivenKm)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.CarId" class="btn btn-outline-info">Ändra</a>
+                    <a asp-action="Details" asp-route-id="@item.CarId" class="btn btn-outline-info">Detaljer</a>
+                    <a asp-action="Delete" asp-route-id="@item.CarId" class="btn btn-outline-info">Ta bort</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

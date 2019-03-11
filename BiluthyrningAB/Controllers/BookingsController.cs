@@ -76,7 +76,7 @@ namespace BiluthyrningAB.Controllers
             return View(bookingVm);
         }
 
-        private List<SelectListItem> FillCustomerListOfSelectListItems()
+        public List<SelectListItem> FillCustomerListOfSelectListItems()
         {
             var customers = _context.Customers.ToList();
             List<SelectListItem> listOfCustomers = new List<SelectListItem>();
@@ -90,7 +90,7 @@ namespace BiluthyrningAB.Controllers
             return listOfCustomers;
         }
 
-        private List<SelectListItem> FillCarListOfSelectListItems()
+        public List<SelectListItem> FillCarListOfSelectListItems()
         {
             var cars = _context.Cars.ToList();
             List<SelectListItem> listOfCars = new List<SelectListItem>();

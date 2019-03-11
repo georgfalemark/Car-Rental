@@ -26,6 +26,18 @@ namespace BiluthyrningAB.Controllers
             return View(await _context.Cars.ToListAsync());
         }
 
+        // GET: Cars not booked
+        public async Task<IActionResult> CarsNotBooked()
+        {
+            return View(await _context.Cars.Where(x => x.Booked == false).ToListAsync());
+        }
+
+        // GET: Cars booked
+        public async Task<IActionResult> CarsBooked()
+        {
+            return View(await _context.Cars.Where(x => x.Booked == true).ToListAsync());
+        }
+
         // GET: Cars/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
