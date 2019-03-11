@@ -1,0 +1,77 @@
+﻿@model IEnumerable<BiluthyrningAB.Models.Booking>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@{ int count = 1;}
+
+<p>
+    <div class="row">
+        <div class="col col-8">
+            <br />
+            <a class="btn btn-success" asp-action="Create">Skapa bokning</a>
+            <br />
+            <br />
+        </div>
+        <div class="col col-4 text-center" style="border: 1px solid black">
+            <br />
+            <a class="btn btn-outline-info" asp-action="Index">Alla bokningar</a>
+            <a class="btn btn-primary" asp-action="Not_OnGoingBookings">Slutförda</a>
+            <a class="btn btn-outline-info" asp-action="OnGoingBookings">Pågående</a>
+            <br />
+        </div>
+    </div>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.BookingId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OnGoing)
+            </th>
+            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @count
+                    @{ count++;}
+                </td>
+                <td>
+                    @item.StartDate.ToShortDateString()
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OnGoing)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.BookingId" class="btn btn-outline-info">Ändra</a>
+                    <a asp-action="Details" asp-route-id="@item.BookingId" class="btn btn-outline-info">Detaljer</a>
+                    <a asp-action="Delete" asp-route-id="@item.BookingId" class="btn btn-outline-info">Ta bort</a>
+                </td>
+                <td>
+                    @if (item.OnGoing == true)
+                    {
+                        <a asp-action="FinishBooking" asp-route-id="@item.BookingId" class="btn btn-success">Slutför</a>
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(modelItem => item.Price)
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,53 @@
+﻿@model BiluthyrningAB.ViewModels.BookingVm
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h4>Skapa bokning</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label class="control-label">Kund</label>
+                <select asp-for="Booking.CustomerId" asp-items="Model.Customers" class="form-control">
+                    <option disabled selected>--- VÄLJ KUND ---</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Biltyp</label>
+                <select asp-for="Booking.Car.CarType" asp-items="Model.CarTypes" class="form-control">
+                    <option disabled selected>--- VÄLJ BILTYP ---</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Booking.Car.LicenseNumber" class="control-label"></label>
+                <input asp-for="Booking.Car.LicenseNumber" class="form-control" />
+                <span asp-validation-for="Booking.Car.LicenseNumber" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Booking.StartDate" class="control-label"></label>
+                <input asp-for="Booking.StartDate" class="form-control" />
+                <span asp-validation-for="Booking.StartDate" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Skapa" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Gå tillbaka</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

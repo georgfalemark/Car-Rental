@@ -1,0 +1,62 @@
+﻿@model BiluthyrningAB.Models.Booking
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div>
+    <h4>Detaljer</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.NumberOfKm)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.NumberOfKm)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.StartDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.StartDate)
+        </dd>
+
+        @if (Model.OnGoing == true)
+        {
+
+        }
+        else
+        {
+            <dt>
+                @Html.DisplayNameFor(model => model.ReturnDate)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.ReturnDate)
+            </dd>
+        }
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Customer.FirstName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Customer.FirstName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Customer.LastName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Customer.LastName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Customer.PersonNumber)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Customer.PersonNumber)
+        </dd>
+
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.BookingId">Ändra</a> |
+    <a asp-action="Index">Gå tillbaka</a>
+</div>

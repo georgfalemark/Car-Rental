@@ -1,0 +1,69 @@
+﻿@model BiluthyrningAB.Models.Booking
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h4>Ändra bokning</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            @if (ViewBag.Message != null)
+            {
+                <span class="text-danger">@ViewBag.Message</span>
+            }
+
+            <input type="hidden" asp-for="BookingId" />
+
+            <div class="form-group">
+                <label asp-for="NumberOfKm" class="control-label"></label>
+                <input asp-for="NumberOfKm" class="form-control" />
+                <span asp-validation-for="NumberOfKm" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StartDate" class="control-label"></label>
+                <input asp-for="StartDate" class="form-control" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ReturnDate" class="control-label"></label>
+                <input asp-for="ReturnDate" class="form-control" />
+                <span asp-validation-for="ReturnDate" class="text-danger"></span>
+            </div>
+
+            @*Gömmer fält som inte ska visas*@
+            <input type="hidden" asp-for="OnGoing" />
+
+            @*Gömmer fält som inte ska visas*@
+            <input type="hidden" asp-for="CarId" />
+
+            @*Gömmer fält som inte ska visas*@
+            <input type="hidden" asp-for="CustomerId" />
+
+            @*Gömmer fält som inte ska visas*@
+            <input type="hidden" asp-for="Car.CarType" />
+
+            @*Gömmer fält som inte ska visas*@
+            <input type="hidden" asp-for="Car.LicenseNumber" />
+
+            @*Gömmer fält som inte ska visas*@
+            <input type="hidden" asp-for="Car.CarId" />
+
+
+            <div class="form-group">
+                <input type="submit" value="Spara" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Gå tillbaka</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

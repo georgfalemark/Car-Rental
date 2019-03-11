@@ -1,0 +1,36 @@
+﻿@model BiluthyrningAB.Models.Booking
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h3>Är du säker på att du vill ta bort den här bokningen?</h3>
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.NumberOfKm)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.NumberOfKm)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.StartDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.StartDate)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ReturnDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ReturnDate)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="BookingId" />
+        <input type="submit" value="Ta bort" class="btn btn-primary" /> |
+        <a asp-action="Index">Gå tillbaka</a>
+    </form>
+</div>

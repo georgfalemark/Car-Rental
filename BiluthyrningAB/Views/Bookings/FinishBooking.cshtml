@@ -1,0 +1,64 @@
+﻿@model BiluthyrningAB.Models.Booking
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h4>Slutför bokning</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="FinishBooking">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            @if (ViewBag.Message != null)
+            {
+                <span class="text-danger">@ViewBag.Message</span>
+            }
+
+            @*Gömda fält är nödvändiga för att få en "valid" modelstate*@
+            @*Gömmer fält som inte ska visas*@
+            <input type="hidden" asp-for="BookingId" />
+
+            @*Gömmer fält som inte ska visas*@
+            <input type="hidden" asp-for="Car.CarId" />
+
+            @*Gömmer fält som inte ska visas*@
+            <input type="hidden" asp-for="Car.CarType" />
+
+            @*Gömmer fält som inte ska visas*@
+            <input type="hidden" asp-for="Car.LicenseNumber" />
+
+            @*Gömmer fält som inte ska visas*@
+            <input type="hidden" asp-for="CustomerId" />
+
+            <div class="form-group">
+                <label asp-for="NumberOfKm" class="control-label"></label>
+                <input asp-for="NumberOfKm" type="number" class="form-control" />
+                <span asp-validation-for="NumberOfKm" class="text-danger"></span>
+            </div>
+
+            @*Gömmer fält som inte ska visas*@
+            <input type="hidden" asp-for="StartDate" />
+
+            <div class="form-group">
+                <label asp-for="ReturnDate" class="control-label"></label>
+                <input asp-for="ReturnDate" class="form-control" />
+                <span asp-validation-for="ReturnDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Slutför" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<div>
+    <a asp-action="Index">Gå tillbaka</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,53 @@
+﻿@model IEnumerable<BiluthyrningAB.Models.Customer>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Lägg till kund</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Kundnummer
+                @{ int count = 1;}
+            </th>
+            <th>
+                Namn
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PersonNumber)
+            </th>
+            <th></th>
+            <th>
+                Bokningar
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @count
+                @{ count++;}
+            </td>
+            <td>
+                @item.FirstName @item.LastName
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PersonNumber)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.CustomerId" class="btn btn-outline-info">Ändra</a>
+                <a asp-action="Details" asp-route-id="@item.CustomerId" class="btn btn-outline-info">Detaljer</a>
+                <a asp-action="Delete" asp-route-id="@item.CustomerId" class="btn btn-outline-info">Ta bort</a>
+            </td>
+            <td>
+                <a asp-controller="Bookings" asp-action="BookingsForCertainCustomer" asp-route-CustomerId="@item.CustomerId" class="btn btn-primary">Bokningar</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
