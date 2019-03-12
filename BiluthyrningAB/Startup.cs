@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BiluthyrningAB.Data;
+using BiluthyrningAB.Persistence.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -38,6 +39,13 @@ namespace BiluthyrningAB
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
+
+
+            //Används för att koppla samman interfacet med classen
+            services.AddTransient<ICustomerRepository, CustomerRepository>();
+            services.AddTransient<ICarRepository, CarRepository>();
+            services.AddTransient<IBookingRepository, BookingRepository>();
+
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
