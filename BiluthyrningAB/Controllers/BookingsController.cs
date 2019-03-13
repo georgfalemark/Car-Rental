@@ -8,56 +8,55 @@ using Microsoft.EntityFrameworkCore;
 using BiluthyrningAB.Data;
 using BiluthyrningAB.Models;
 using BiluthyrningAB.ViewModels;
+using BiluthyrningAB.Persistence.Repositories;
 
 namespace BiluthyrningAB.Controllers
 {
     public class BookingsController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly IBookingRepository _bookingRepository;
 
-        public BookingsController(AppDbContext context)
+        public BookingsController(AppDbContext context, IBookingRepository bookingRepository)
         {
             _context = context;
+            _bookingRepository = bookingRepository;
         }
 
         // GET: Bookings
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Bookings.Include(x => x.Car).ToListAsync());
+            return View(_bookingRepository.GetAllBookings());
         }
 
         //GET: Bookings for a certain customer
         public async Task<IActionResult> BookingsForCertainCustomer(Guid? CustomerId)
         {
-            return View(await _context.Bookings.Include(x => x.Car).Include(x => x.Customer).Where(x => x.Customer.CustomerId == CustomerId).ToListAsync());
+            return View(_bookingRepository.GetBookingsForCertainCustomer(CustomerId));
         }
 
         //GET: Bookings Not ongoing
         public async Task<IActionResult> OnGoingBookings()
         {
-            return View(await _context.Bookings.Include(x => x.Car).Where(x => x.OnGoing == true).ToListAsync());
+            return View(_bookingRepository.GetBookingsDependingOnStatus(true));
         }
 
         //GET: Bookings ongoing
         public async Task<IActionResult> Not_OnGoingBookings()
         {
-            return View(await _context.Bookings.Include(x => x.Car).Where(x => x.OnGoing == false).ToListAsync());
+            return View(_bookingRepository.GetBookingsDependingOnStatus(false));
         }
 
         // GET: Bookings/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var booking = await _context.Bookings.Include(x => x.Customer).Include(x => x.Car)
-                .FirstOrDefaultAsync(m => m.BookingId == id);
+            var booking = _bookingRepository.GetBookingById(id);
+
             if (booking == null)
-            {
                 return NotFound();
-            }
 
             return View(booking);
         }
@@ -158,7 +157,11 @@ namespace BiluthyrningAB.Controllers
             if (id == null)
                 return NotFound();
 
-            var booking = _context.Bookings.Include(x => x.Car).Include(x => x.Customer).Single(x => x.BookingId == id);
+
+            var booking = _bookingRepository.GetBookingById(id);
+
+            //GAMMALT
+            //var booking = _context.Bookings.Include(x => x.Car).Include(x => x.Customer).Single(x => x.BookingId == id);
 
             if (booking == null)
                 return NotFound();

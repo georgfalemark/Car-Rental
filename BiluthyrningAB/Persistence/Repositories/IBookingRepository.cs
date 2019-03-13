@@ -9,7 +9,8 @@ namespace BiluthyrningAB.Persistence.Repositories
     public interface IBookingRepository
     {
         IEnumerable<Booking> GetAllBookings();
-
-
+        IEnumerable<Booking> GetBookingsForCertainCustomer(Guid? CustomerId);
+        IEnumerable<Booking> GetBookingsDependingOnStatus(bool status);
+        Booking GetBookingById(Guid? id);
     }
 }

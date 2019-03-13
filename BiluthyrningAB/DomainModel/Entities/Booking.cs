@@ -23,7 +23,7 @@ namespace BiluthyrningAB.Models
             {
                 string[] carTypes = Enum.GetNames(typeof(CarType));
 
-                if (Car?.CarType.ToString() == null)    //nån slags indikation på att priset blir fel
+                if (Car?.CarType.ToString() == null)      //nån slags indikation på att priset blir fel
                     return 1;                           
 
                 if (carTypes.Single(x => x == "Small") == Car.CarType.ToString())

@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<BiluthyrningAB.Models.Booking>
 
+
 @{
     ViewData["Title"] = "Index";
 }
@@ -58,7 +59,7 @@
                     @Html.DisplayFor(modelItem => item.OnGoing)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.BookingId" class="btn btn-outline-info">Ändra</a> 
+                    <a asp-action="Edit" asp-route-id="@item.BookingId" class="btn btn-outline-info">Ändra</a>
                     <a asp-action="Details" asp-route-id="@item.BookingId" class="btn btn-outline-info">Detaljer</a>
                     <a asp-action="Delete" asp-route-id="@item.BookingId" class="btn btn-outline-info">Ta bort</a>
                 </td>
