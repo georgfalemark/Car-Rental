@@ -8,34 +8,48 @@ using Microsoft.EntityFrameworkCore;
 using BiluthyrningAB.Data;
 using BiluthyrningAB.Models;
 using BiluthyrningAB.ViewModels;
+using BiluthyrningAB.Persistence.Repositories;
 
 namespace BiluthyrningAB.Controllers
 {
     public class CarsController : Controller
     {
-        private readonly AppDbContext _context;
+        //private readonly AppDbContext _context;
+        private readonly ICarRepository _carRepository;
+        private readonly IEntityFrameworkRepository _entityFrameworkRepository;
 
-        public CarsController(AppDbContext context)
+        public CarsController(ICarRepository carRepository, IEntityFrameworkRepository entityFrameworkRepository)
         {
-            _context = context;
+            //_context = context;
+            _carRepository = carRepository;
+            _entityFrameworkRepository = entityFrameworkRepository;
         }
 
         // GET: Cars
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Cars.ToListAsync());
+            var myTask = Task.Run(() => _carRepository.GetAllCars());
+            return View(await myTask);
+
+
+            //return View(_carRepository.GetAllCars());
         }
 
         // GET: Cars not booked
         public async Task<IActionResult> CarsNotBooked()
         {
-            return View(await _context.Cars.Where(x => x.Booked == false).ToListAsync());
+            var myTask = Task.Run(() => _carRepository.GetCarsDependingOnBookingStatus(false));
+            return View(await myTask);
         }
 
         // GET: Cars booked
         public async Task<IActionResult> CarsBooked()
         {
-            return View(await _context.Cars.Where(x => x.Booked == true).ToListAsync());
+            var myTask = Task.Run(() => _carRepository.GetCarsDependingOnBookingStatus(true));
+            return View(await myTask);
+
+            //return View(_carRepository.GetCarsDependingOnBookingStatus(true));
+            //return View(await _context.Cars.Where(x => x.Booked == true).ToListAsync());
         }
 
         // GET: Cars/Details/5
@@ -46,8 +60,15 @@ namespace BiluthyrningAB.Controllers
                 return NotFound();
             }
 
-            var car = await _context.Cars
-                .FirstOrDefaultAsync(m => m.CarId == id);
+            var car = _carRepository.GetCarById(id);
+                
+                
+                //await _context.Cars
+                //.FirstOrDefaultAsync(m => m.CarId == id);
+
+
+
+
             if (car == null)
             {
                 return NotFound();
@@ -61,6 +82,13 @@ namespace BiluthyrningAB.Controllers
         {
             CarVm carTypeVm = new CarVm();
 
+            carTypeVm.CarTypes = GetCarTypesToSelectList();
+
+            return View(carTypeVm);
+        }
+
+        private List<SelectListItem> GetCarTypesToSelectList()
+        {
             string[] arr = Enum.GetNames(typeof(CarType));
             List<SelectListItem> list = new List<SelectListItem>();
 
@@ -70,9 +98,7 @@ namespace BiluthyrningAB.Controllers
                 list.Add(y);
             }
 
-            carTypeVm.CarTypes = list;
-
-            return View(carTypeVm);
+            return list;
         }
 
         // POST: Cars/Create
@@ -83,8 +109,12 @@ namespace BiluthyrningAB.Controllers
             if (ModelState.IsValid)
             {
                 car.CarId = Guid.NewGuid();
-                _context.Add(car);
-                await _context.SaveChangesAsync();
+
+                _carRepository.AddCar(car);
+                _entityFrameworkRepository.SaveChangesAsync();
+
+                //_context.Add(car);
+                //await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(car);
@@ -98,7 +128,10 @@ namespace BiluthyrningAB.Controllers
                 return NotFound();
             }
 
-            var car = await _context.Cars.FindAsync(id);
+            //var car = await _context.Cars.FindAsync(id);
+
+            var car = _carRepository.GetCarById(id);
+
             if (car == null)
             {
                 return NotFound();
@@ -106,24 +139,26 @@ namespace BiluthyrningAB.Controllers
 
             CarVm carTypeVm = new CarVm();
 
-            string[] arr = Enum.GetNames(typeof(CarType));
-            List<SelectListItem> list = new List<SelectListItem>();
+            carTypeVm.CarTypes = GetCarTypesToSelectList();
 
-            foreach (var item in arr)
-            {
-                var y = new SelectListItem() { Text = item, Value = item };
-                list.Add(y);
-            }
+            //string[] arr = Enum.GetNames(typeof(CarType));
+            //List<SelectListItem> list = new List<SelectListItem>();
 
-            carTypeVm.CarTypes = list;
+            //foreach (var item in arr)
+            //{
+            //    var y = new SelectListItem() { Text = item, Value = item };
+            //    list.Add(y);
+            //}
+
+            //carTypeVm.CarTypes = list;
+
+
             carTypeVm.Car = car;
 
             return View(carTypeVm);
         }
 
         // POST: Cars/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("CarId,LicenseNumber,CarType,NumberOfDrivenKm")] Car car)
@@ -137,8 +172,15 @@ namespace BiluthyrningAB.Controllers
             {
                 try
                 {
-                    _context.Update(car);
-                    await _context.SaveChangesAsync();
+                    _carRepository.UpdateCar(car);
+
+
+                    //_context.Update(car);
+
+
+                    _entityFrameworkRepository.SaveChangesAsync();
+
+                    //await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -156,16 +198,16 @@ namespace BiluthyrningAB.Controllers
 
             CarVm carTypeVm = new CarVm();
 
-            string[] arr = Enum.GetNames(typeof(CarType));
-            List<SelectListItem> list = new List<SelectListItem>();
+            //string[] arr = Enum.GetNames(typeof(CarType));
+            //List<SelectListItem> list = new List<SelectListItem>();
 
-            foreach (var item in arr)
-            {
-                var y = new SelectListItem() { Text = item, Value = item };
-                list.Add(y);
-            }
+            //foreach (var item in arr)
+            //{
+            //    var y = new SelectListItem() { Text = item, Value = item };
+            //    list.Add(y);
+            //}
 
-            carTypeVm.CarTypes = list;
+            carTypeVm.CarTypes = GetCarTypesToSelectList();
             carTypeVm.Car = car;
 
             return View(carTypeVm);
@@ -175,16 +217,19 @@ namespace BiluthyrningAB.Controllers
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var car = await _context.Cars
-                .FirstOrDefaultAsync(m => m.CarId == id);
+            var car = _carRepository.GetCarById(id);
+
+
+            //var car = await _context.Cars
+            //    .FirstOrDefaultAsync(m => m.CarId == id);
+
+
+
             if (car == null)
-            {
                 return NotFound();
-            }
+
 
             return View(car);
         }
@@ -194,15 +239,20 @@ namespace BiluthyrningAB.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var car = await _context.Cars.FindAsync(id);
-            _context.Cars.Remove(car);
-            await _context.SaveChangesAsync();
+            var car = _carRepository.GetCarById(id);
+            _carRepository.RemoveCar(car);
+            _entityFrameworkRepository.SaveChangesAsync();
+
+            //var car = await _context.Cars.FindAsync(id);
+            //_context.Cars.Remove(car);
+            //await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
         private bool CarExists(Guid id)
         {
-            return _context.Cars.Any(e => e.CarId == id);
+            return _carRepository.CarExists(id);
         }
     }
 }

@@ -1,5 +1,71 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿
+<br />
+<div class="row">
+
+    <div class="col col-4">
+        <div class="card" style="background-color: darkorange;">
+            <br />
+            <div class="text-center">
+                <a><i class="fas fa-clipboard-list" style="font-size: 100px;"></i></a>
+            </div>
+            <div class="card-body text-center"><h2><a>Bokningar</a></h2></div>
+
+            <div class="card-footer" style="background-color: gainsboro; color: darkorange; border: 3px solid darkorange;">
+                <div class="row">
+                    <div class="col col-6 text-left">
+                        <strong><a asp-controller="Bookings" asp-action="Index" style="color: darkorange;">Visa detaljer</a></strong>
+                    </div>
+                    <div class="col col-6 text-right">
+                        <a asp-controller="Bookings" asp-action="Index" style="color: darkorange;"><i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col col-4">
+        <div class="card" style="background-color: salmon;">
+            <br />
+            <div class="text-center">
+                <a><i class="fas fa-car-side" style="font-size: 100px;"></i></a>
+            </div>
+            <div class="card-body text-center"><h2><a>Bilar</a></h2></div>
+
+            <div class="card-footer" style="background-color: gainsboro; color: salmon; border: 3px solid salmon;">
+                <div class="row">
+                    <div class="col col-6 text-left">
+                        <strong><a asp-controller="Cars" asp-action="Index" style="color: salmon;">Visa detaljer</a></strong>
+                    </div>
+                    <div class="col col-6 text-right">
+                        <a asp-controller="Cars" asp-action="Index" style="color: salmon;"><i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col col-4">
+        <div class="card" style="background-color: coral;">
+            <br />
+            <div class="text-center">
+                <a><i class="fas fa-smile-beam" style="font-size: 100px;"></i></a>
+            </div>
+            <div class="card-body text-center"><h2><a>Kunder</a></h2></div>
+
+            <div class="card-footer" style="background-color: gainsboro; color: coral; border: 3px solid coral;">
+                <div class="row">
+                    <div class="col col-6 text-left">
+                        <strong><a asp-controller="Customers" asp-action="Index" style="color: coral;">Visa detaljer</a></strong>
+                    </div>
+                    <div class="col col-6 text-right">
+                        <a asp-controller="Customers" asp-action="Index" style="color: coral;"><i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
 
 

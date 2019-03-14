@@ -45,6 +45,8 @@ namespace BiluthyrningAB
             services.AddTransient<ICustomerRepository, CustomerRepository>();
             services.AddTransient<ICarRepository, CarRepository>();
             services.AddTransient<IBookingRepository, BookingRepository>();
+            services.AddTransient<IEntityFrameworkRepository, EntityFrameworkRepository>();
+
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);

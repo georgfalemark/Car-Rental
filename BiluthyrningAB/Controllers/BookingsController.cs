@@ -14,37 +14,58 @@ namespace BiluthyrningAB.Controllers
 {
     public class BookingsController : Controller
     {
-        private readonly AppDbContext _context;
         private readonly IBookingRepository _bookingRepository;
+        private readonly ICarRepository _carRepository;
+        private readonly ICustomerRepository _customerRepository;
+        private readonly IEntityFrameworkRepository _entityFrameworkRepository;
 
-        public BookingsController(AppDbContext context, IBookingRepository bookingRepository)
+        public BookingsController(IBookingRepository bookingRepository, ICarRepository carRepository, IEntityFrameworkRepository entityFrameworkRepository, ICustomerRepository customerRepository)
         {
-            _context = context;
             _bookingRepository = bookingRepository;
+            _carRepository = carRepository;
+            _entityFrameworkRepository = entityFrameworkRepository;
+            _customerRepository = customerRepository;
         }
 
         // GET: Bookings
         public async Task<IActionResult> Index()
         {
-            return View(_bookingRepository.GetAllBookings());
+            var myTask = Task.Run(() => _bookingRepository.GetAllBookings());
+            return View(await myTask);
+
+            //return View(_bookingRepository.GetAllBookings());
         }
 
         //GET: Bookings for a certain customer
         public async Task<IActionResult> BookingsForCertainCustomer(Guid? CustomerId)
         {
-            return View(_bookingRepository.GetBookingsForCertainCustomer(CustomerId));
+            var myTask = Task.Run(() => _bookingRepository.GetBookingsForCertainCustomer(CustomerId));
+            return View(await myTask);
+
+
+            //return View(_bookingRepository.GetBookingsForCertainCustomer(CustomerId));
         }
 
         //GET: Bookings Not ongoing
         public async Task<IActionResult> OnGoingBookings()
         {
-            return View(_bookingRepository.GetBookingsDependingOnStatus(true));
+            var myTask = Task.Run(() => _bookingRepository.GetBookingsDependingOnStatus(true));
+            return View(await myTask);
+
+
+
+            //return View(_bookingRepository.GetBookingsDependingOnStatus(true));
         }
 
         //GET: Bookings ongoing
         public async Task<IActionResult> Not_OnGoingBookings()
         {
-            return View(_bookingRepository.GetBookingsDependingOnStatus(false));
+            var myTask = Task.Run(() => _bookingRepository.GetBookingsDependingOnStatus(false));
+            return View(await myTask);
+
+
+
+            //return View(_bookingRepository.GetBookingsDependingOnStatus(false));
         }
 
         // GET: Bookings/Details/5
@@ -77,7 +98,13 @@ namespace BiluthyrningAB.Controllers
 
         public List<SelectListItem> FillCustomerListOfSelectListItems()
         {
-            var customers = _context.Customers.ToList();
+            var customers = _customerRepository.GetAllCustomers();
+                
+                
+            //GAMMALT
+            //_context.Customers.ToList();
+
+
             List<SelectListItem> listOfCustomers = new List<SelectListItem>();
 
             foreach (var customer in customers)
@@ -91,7 +118,11 @@ namespace BiluthyrningAB.Controllers
 
         public List<SelectListItem> FillCarListOfSelectListItems()
         {
-            var cars = _context.Cars.ToList();
+            var cars = _carRepository.GetAllCars();
+
+            //GAMMALT
+            //_context.Cars.ToList();
+
             List<SelectListItem> listOfCars = new List<SelectListItem>();
 
             foreach (var car in cars)
@@ -112,7 +143,12 @@ namespace BiluthyrningAB.Controllers
             booking.OnGoing = true;
 
             //Hämtar bilen vi har att göra med och sätter den till bokad. Om den redan är bokad så berättar vi det 
-            booking.Car = _context.Cars.Single(x => x.CarId == booking.CarId);
+            booking.Car = _carRepository.GetCarById(booking.CarId);
+
+
+            //GAMMALT
+            //booking.Car = _context.Cars.Single(x => x.CarId == booking.CarId);
+
 
             if (booking.Car.Booked == false)
             {
@@ -131,12 +167,29 @@ namespace BiluthyrningAB.Controllers
             {
                 //Lägger till bokningen i systemet
                 booking.BookingId = Guid.NewGuid();
-                _context.Add(booking);
+                _bookingRepository.AddBooking(booking);
+
+
+                //GAMMALT
+                //_context.Add(booking);
+
+
 
                 //Uppdaterar bilen till bokad
-                _context.Update(booking.Car);
+                _carRepository.UpdateCar(booking.Car);
 
-                await _context.SaveChangesAsync();
+
+                //GAMMALT 
+                //_context.Update(booking.Car);
+
+
+                _entityFrameworkRepository.SaveChangesAsync();
+
+                //await _context.SaveChangesAsync();
+
+
+
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -156,7 +209,6 @@ namespace BiluthyrningAB.Controllers
         {
             if (id == null)
                 return NotFound();
-
 
             var booking = _bookingRepository.GetBookingById(id);
 
@@ -197,10 +249,29 @@ namespace BiluthyrningAB.Controllers
                     booking.Car.NumberOfDrivenKm = booking.Car.NumberOfDrivenKm + Convert.ToInt32(booking.NumberOfKm);
 
                     //Uppdaterar sedan både bilen (för antalet mils räkning) samt bokningen
-                    _context.Update(booking.Car);
-                    _context.Update(booking);
+                    _carRepository.UpdateCar(booking.Car);
 
-                    await _context.SaveChangesAsync();
+
+
+
+                    //GAMMALT
+                    //_context.Update(booking.Car);
+
+
+                    _bookingRepository.UpdateBooking(booking);
+
+                    //GAMMALT
+                    //_context.Update(booking);
+
+
+
+                    _entityFrameworkRepository.SaveChangesAsync();
+
+                    //GAMMALT!
+                    //await _context.SaveChangesAsync();
+
+
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -224,7 +295,12 @@ namespace BiluthyrningAB.Controllers
             if (id == null)
                 return NotFound();
 
-            var booking = _context.Bookings.Include(x => x.Car).Include(x => x.Customer).Single(x => x.BookingId == id);
+            var booking = _bookingRepository.GetBookingById(id);
+
+            //GAMMALT
+            //var booking = _context.Bookings.Include(x => x.Car).Include(x => x.Customer).Single(x => x.BookingId == id);
+
+
             if (booking == null)
                 return NotFound();
 
@@ -250,8 +326,24 @@ namespace BiluthyrningAB.Controllers
             {
                 try
                 {
-                    _context.Update(booking);
-                    await _context.SaveChangesAsync();
+
+
+                    _bookingRepository.UpdateBooking(booking);
+
+
+                    _entityFrameworkRepository.SaveChangesAsync();
+
+
+                    //_bookingRepository.SaveChangesAsync();
+
+
+                    //GAMMALT
+                    //_context.Update(booking);
+
+                    //await _context.SaveChangesAsync();
+
+
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -273,16 +365,16 @@ namespace BiluthyrningAB.Controllers
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var booking = await _context.Bookings
-                .FirstOrDefaultAsync(m => m.BookingId == id);
+            var booking = _bookingRepository.GetBookingById(id);
+
+            //GAMMALT
+            //var booking = await _context.Bookings
+            //    .FirstOrDefaultAsync(m => m.BookingId == id);
+
             if (booking == null)
-            {
                 return NotFound();
-            }
 
             return View(booking);
         }
@@ -292,15 +384,28 @@ namespace BiluthyrningAB.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var booking = await _context.Bookings.FindAsync(id);
-            _context.Bookings.Remove(booking);
-            await _context.SaveChangesAsync();
+
+            var booking = _bookingRepository.GetBookingById(id);
+
+            _bookingRepository.RemoveBooking(booking);
+
+
+            _entityFrameworkRepository.SaveChangesAsync();
+            //_bookingRepository.SaveChangesAsync();
+
+
+            //GAMMALT
+            //var booking = await _context.Bookings.FindAsync(id);
+            //_context.Bookings.Remove(booking);
+            //await _context.SaveChangesAsync();
+
+
             return RedirectToAction(nameof(Index));
         }
 
         private bool BookingExists(Guid id)
         {
-            return _context.Bookings.Any(e => e.BookingId == id);
+            return _bookingRepository.BookingExists(id);
         }
     }
 }

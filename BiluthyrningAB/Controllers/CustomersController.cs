@@ -7,34 +7,42 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BiluthyrningAB.Data;
 using BiluthyrningAB.Models;
+using BiluthyrningAB.Persistence.Repositories;
 
 namespace BiluthyrningAB.Controllers
 {
     public class CustomersController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly ICustomerRepository _customerRepository;
+        private readonly IEntityFrameworkRepository _entityFrameworkRepository;
 
-        public CustomersController(AppDbContext context)
+        public CustomersController(ICustomerRepository customerRepository, IEntityFrameworkRepository entityFrameworkRepository)
         {
-            _context = context;
+            _customerRepository = customerRepository;
+            _entityFrameworkRepository = entityFrameworkRepository;
         }
 
         // GET: Customers
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Customers.ToListAsync());
+            var myTask = Task.Run(() => _customerRepository.GetAllCustomers());
+            return View(await myTask);
         }
 
         // GET: Customers/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(m => m.CustomerId == id);
+
+            var customer = _customerRepository.GetCustomerById(id);
+
+
+            //var customer = await _context.Customers
+            //    .FirstOrDefaultAsync(m => m.CustomerId == id);
+
+
             if (customer == null)
             {
                 return NotFound();
@@ -57,8 +65,14 @@ namespace BiluthyrningAB.Controllers
             if (ModelState.IsValid)
             {
                 customer.CustomerId = Guid.NewGuid();
-                _context.Add(customer);
-                await _context.SaveChangesAsync();
+
+                _customerRepository.AddCustomer(customer);
+
+                //_context.Add(customer);
+
+                _entityFrameworkRepository.SaveChangesAsync();
+
+                //await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(customer);
@@ -72,7 +86,13 @@ namespace BiluthyrningAB.Controllers
                 return NotFound();
             }
 
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = _customerRepository.GetCustomerById(id);
+
+
+            //var customer = await _context.Customers.FindAsync(id);
+
+
+
             if (customer == null)
             {
                 return NotFound();
@@ -94,8 +114,14 @@ namespace BiluthyrningAB.Controllers
             {
                 try
                 {
-                    _context.Update(customer);
-                    await _context.SaveChangesAsync();
+                    _customerRepository.UpdateCustomer(customer);
+
+
+                    //_context.Update(customer);
+
+                    _entityFrameworkRepository.SaveChangesAsync();
+
+                    //await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -117,16 +143,18 @@ namespace BiluthyrningAB.Controllers
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(m => m.CustomerId == id);
+
+            var customer = _customerRepository.GetCustomerById(id);
+
+
+            //var customer = await _context.Customers
+            //    .FirstOrDefaultAsync(m => m.CustomerId == id);
+
+
             if (customer == null)
-            {
                 return NotFound();
-            }
 
             return View(customer);
         }
@@ -136,15 +164,30 @@ namespace BiluthyrningAB.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var customer = await _context.Customers.FindAsync(id);
-            _context.Customers.Remove(customer);
-            await _context.SaveChangesAsync();
+
+            var customer = _customerRepository.GetCustomerById(id);
+
+
+
+            //var customer = await _context.Customers.FindAsync(id);
+
+
+            _customerRepository.RemoveCustomer(customer);
+            //_context.Customers.Remove(customer);
+
+
+            _entityFrameworkRepository.SaveChangesAsync();
+
+            //await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool CustomerExists(Guid id)
         {
-            return _context.Customers.Any(e => e.CustomerId == id);
+            return _customerRepository.CustomerExists(id);
+
+
+            //return _context.Customers.Any(e => e.CustomerId == id);
         }
     }
 }

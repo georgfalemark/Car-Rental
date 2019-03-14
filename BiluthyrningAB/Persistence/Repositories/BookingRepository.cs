@@ -38,5 +38,28 @@ namespace BiluthyrningAB.Persistence.Repositories
             return _context.Bookings.Include(x => x.Customer).Include(x => x.Car)
                 .FirstOrDefault(m => m.BookingId == id);
         }
+
+        public bool BookingExists(Guid id)
+        {
+            return _context.Bookings.Any(e => e.BookingId == id);
+        }
+
+        public void AddBooking(Booking booking)
+        {
+            _context.Add(booking);
+        }
+
+        public void UpdateBooking(Booking booking)
+        {
+            _context.Update(booking);
+        }
+
+        public void RemoveBooking(Booking booking)
+        {
+            _context.Bookings.Remove(booking);
+        }
+
+        
+
     }
 }
