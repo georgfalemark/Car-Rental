@@ -9,7 +9,5 @@ namespace BiluthyrningAB.Persistence.Repositories
     {
         void SaveChangesAsync();
 
-
-
     }
 }

@@ -59,7 +59,5 @@ namespace BiluthyrningAB.Persistence.Repositories
             _context.Bookings.Remove(booking);
         }
 
-        
-
     }
 }
